@@ -8,7 +8,7 @@ function handleHashChange(e) {
     const up = new URLSearchParams(hash);
     const theme = up.get('theme');
 
-    style.innerText = `body { background-color: ${theme}}`;
+    style.innerText = `body { background-color: ${theme}; }`;
 }
 
 handleHashChange(); // first hit

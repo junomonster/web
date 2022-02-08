@@ -69,11 +69,10 @@
         const display = document.getElementById('display');
 
         function handleThemeChange(theme) {
-            const value = `body { background-color: ${theme}}`;
+            const value = `body { background-color: ${theme}; }`;
             if (theme.length > 0) {
-                const splitedValue = value.split(theme);
                 sanitizer.innerText = theme;
-                display.innerHTML = splitedValue[0] + "<span style='color: red'>" + sanitizer.innerHTML + "</span>" + splitedValue[1];
+                display.innerHTML = "body { background-color: <span style='color: red'>" + sanitizer.innerHTML + "</span>; }";
             } else {
                 display.innerText = value;
             }
