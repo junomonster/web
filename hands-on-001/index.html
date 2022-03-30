@@ -3,54 +3,192 @@
 <head>
     <meta charset="utf-8" />
     <title>Dreamhack - CSS Injection Hands-on - 001</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        * {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         iframe {
             width: 100%;
-            height: 100%;
+            height: 250px;
             border: 0;
             margin: 0;
             padding: 0;
+            border-radius: 10px;
         }
         #url {
             font-size: 17px;
-            border: 1px solid black;
-            padding-left: 5px;
+            padding-left: 20px;
         }
         input[type=text] {
           font-size: 17px;
           margin: 8px 0;
           border: 0;
-          color: red;
+          /* color: red; */
           box-sizing: border-box;
         }
         button {
           float: right;
-          padding: 9px;
-          background: #2196F3;
+          padding: 12px;
           color: white;
           font-size: 17px;
           border: 0;
           border-left: none; /* Prevent double borders */
           cursor: pointer;
         }
+
+        .urlbox {
+            border-radius: 14px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        #url {
+            display: flex;
+            align-items: center;
+            border-radius: 14px;
+            height: 100%;
+        }
+
+        .theme-light .urlbox {
+            background-color: rgb(236, 236, 243);
+        }
+
+        .theme-light input {
+            background-color: rgb(236, 236, 243);
+            color: rgb(47, 47, 47);
+        }
+
+        .theme-light #url {
+            color: rgb(128, 125, 131);
+        }
+
+        .theme-light button {
+            background: rgb(47, 47, 47);
+        }
+
+        .theme-light button {
+            border-radius: 0 14px 14px 0;
+            padding-right: 20px;
+            padding-left: 20px;
+            height: 100%;
+            margin-left: auto;
+        }
+
+        .theme-dark {
+            background-color: rgb(39, 39, 43);
+        }
+
+        .theme-dark .urlbox {
+            background-color: rgb(21, 21, 21);
+        }
+
+        .theme-dark input {
+            background-color: rgb(21, 21, 21);
+            color: rgb(255, 255, 255);
+        }
+
+        .theme-dark #url {
+            color: rgb(128, 125, 131);
+        }
+
+        .theme-dark button {
+            background: white;
+            color: rgb(39,39,43);
+        }
+
+        .theme-dark button {
+            border-radius: 0 14px 14px 0;
+            padding-right: 20px;
+            padding-left: 20px;
+            height: 100%;
+            margin-left: auto;
+            font-weight: bold;
+        }
     </style>
     <style>
         #display {
             font-weight: bold;
-            font-family: consolas 'courier new' monospace;
             padding: 10px;
+            font-size: 16px;
         }
+
+        .theme-light .content-box {
+            border: 3px solid rgb(236, 236, 243);
+            border-radius: 10px;
+            padding: 13px 20px 20px 20px;
+            color:rgb(113, 112, 116);
+        }
+
+        .theme-dark .content-box {
+            border: 3px solid rgb(236, 236, 243);
+            border-radius: 10px;
+            padding: 13px 20px 20px 20px;
+            color:rgb(113, 112, 116);
+            background: white;
+        }
+
+        .content-box {
+            margin-top: 20px;
+        }
+
+        .root-box {
+            min-width: 500px;
+        }
+
+        .warn-msg {
+            display: none;
+        }
+
+        @media screen and (max-width: 500px) {
+            .root-box {
+                -webkit-filter: blur(5px);
+                -moz-filter: blur(5px);
+                -o-filter: blur(5px);
+                -ms-filter: blur(5px);
+                filter: blur(5px);
+                width: 100px;
+                height: 100px;
+                background-color: #ccc;
+            }
+            .warn-msg {
+                display: block;
+                position: absolute;
+                margin-left: auto;
+                margin-right: auto;
+                left: 0;
+                right: 0;
+                text-align: center;
+            }
+
+        }
+
     </style>
 </head>
-<body>
-    <div id="url">https://dreamhack-contenst.local/?theme=<input id="input" size=6 type=text value="yellow" oninput="this.size = this.value.length"><button onclick="navigate()">navigate</button></div>
-    <hr>
-    <div id="display">
+<body class="theme-light">
+    <div class=" root-box">
+        <div class="urlbox">
+            <div id="url">
+                https://site/?theme=
+                <input id="input" size=12 type=text value="DarkSeaGreen" oninput="resizeInput(this)">
+            </div>
+            <button onclick="navigate()">navigate</button>
+        </div>
+        <div class="content-box">
+            <div id="display">
+            </div>
+            <div id="sanitizer" style="display: none"></div>
+            <iframe id="iframe" src="content.html#theme=DarkSeaGreen"></iframe>
+        </div>
     </div>
-    <div id="sanitizer" style="display: none"></div>
-    <hr>
-    <iframe id="iframe" src="content.html#theme=yellow"></iframe>
+    <div class="warn-msg">
+        실습을 위해 최소 500px의 공간이 필요합니다.
+    </div>
     <script>
         const iframe = document.getElementById('iframe');
         const input = document.getElementById('input');
@@ -78,6 +216,17 @@
             }
         }
         navigate();
+
+        function resizeInput(elem) {
+            const urlbox = document.getElementsByClassName('urlbox')[0]
+            if (360 + elem.offsetWidth < urlbox.offsetWidth)
+                elem.size = elem.value.length;
+        }
+    </script>
+    <script>
+        if (location.href.indexOf("theme-dark") != -1) {
+            document.body.className = 'theme-dark'
+        }
     </script>
 </body>
 </html>
